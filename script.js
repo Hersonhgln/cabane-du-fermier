@@ -318,3 +318,56 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
+// --- Cookie Consent Banner ---
+document.addEventListener('DOMContentLoaded', () => {
+    const consentMode = localStorage.getItem('cookie_consent');
+
+    const banner = document.createElement('div');
+    banner.className = 'cookie-banner';
+    banner.innerHTML = `
+        <div class="container cookie-content">
+            <div class="cookie-text">
+                <h3>🍪 Respect de votre vie privée</h3>
+                <p>Nous utilisons des cookies pour améliorer votre expérience sur la Cabane du Fermier, analyser notre trafic et vous proposer des offres adaptées.</p>
+            </div>
+            <div class="cookie-buttons">
+                <button class="btn btn-outline cookie-btn-refuse" id="btnRefuseCookies">Refuser</button>
+                <button class="btn btn-primary cookie-btn-accept" id="btnAcceptCookies">Tout Accepter</button>
+            </div>
+        </div>
+    `;
+
+    if (!consentMode) {
+        document.body.appendChild(banner);
+        setTimeout(() => banner.classList.add('show'), 100);
+    } else if (consentMode === 'granted') {
+        updateGtmConsent('granted');
+    }
+
+    document.body.addEventListener('click', (e) => {
+        if (e.target.id === 'btnAcceptCookies') {
+            localStorage.setItem('cookie_consent', 'granted');
+            updateGtmConsent('granted');
+            banner.classList.remove('show');
+            setTimeout(() => banner.remove(), 500);
+        } else if (e.target.id === 'btnRefuseCookies') {
+            localStorage.setItem('cookie_consent', 'denied');
+            updateGtmConsent('denied');
+            banner.classList.remove('show');
+            setTimeout(() => banner.remove(), 500);
+        }
+    });
+
+    function updateGtmConsent(status) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('consent', 'update', {
+            'ad_storage': status,
+            'ad_user_data': status,
+            'ad_personalization': status,
+            'analytics_storage': status
+        });
+        dataLayer.push({'event': 'consent_update'});
+    }
+});

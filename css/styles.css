@@ -1522,3 +1522,62 @@ h1, h2, h3, h4, h5, h6 {
         font-size: 0.78rem;
     }
 }
+/* Cookie Banner */
+.cookie-banner {
+    position: fixed;
+    bottom: -150%;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    transition: bottom 0.5s ease-in-out;
+    padding: 1.5rem;
+    border-top: 4px solid var(--primary);
+}
+.cookie-banner.show {
+    bottom: 0;
+}
+.cookie-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+}
+.cookie-text h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    color: var(--primary-dark);
+}
+.cookie-text p {
+    color: var(--text);
+    font-size: 0.95rem;
+    margin: 0;
+}
+.cookie-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+.cookie-btn-refuse {
+    border-color: var(--text-light);
+    color: var(--text-light);
+}
+.cookie-btn-refuse:hover {
+    background: var(--text-light);
+    color: #fff;
+}
+@media (max-width: 768px) {
+    .cookie-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .cookie-buttons {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
