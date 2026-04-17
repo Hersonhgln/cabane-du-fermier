@@ -140,122 +140,90 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ----- 6. Livraison Toggle + Leaflet Map -----
-    const btnNon      = document.getElementById('livraisonNon');
-    const btnOui      = document.getElementById('livraisonOui');
+    // ----- 6. Livraison Toggle + Géolocalisation -----
+    const btnNon       = document.getElementById('livraisonNon');
+    const btnOui       = document.getElementById('livraisonOui');
     const livraisonVal = document.getElementById('livraisonValue');
-    const mapSection  = document.getElementById('mapSection');
-
-    let leafletMap = null;
-    let marker     = null;
-
-    /** Build the custom green teardrop icon */
-    function mkIcon() {
-        return L.divIcon({
-            className: '',
-            html: `<div style="
-                width:32px;height:32px;
-                background:linear-gradient(135deg,#2d6a4f,#52b788);
-                border-radius:50% 50% 50% 0;
-                transform:rotate(-45deg);
-                border:3px solid #fff;
-                box-shadow:0 3px 10px rgba(27,67,50,.4);
-            "></div>`,
-            iconSize:   [32, 32],
-            iconAnchor: [16, 32]
-        });
-    }
-
-    /** Place / move marker and read back the address */
-    function placeMarker(lat, lng, address) {
-        if (!leafletMap) return;
-        if (marker) {
-            marker.setLatLng([lat, lng]);
-        } else {
-            marker = L.marker([lat, lng], { icon: mkIcon(), draggable: true }).addTo(leafletMap);
-            marker.on('dragend', ev => {
-                const p = ev.target.getLatLng();
-                reverseGeocode(p.lat, p.lng);
-            });
-        }
-        document.getElementById('mapLat').value = lat.toFixed(6);
-        document.getElementById('mapLng').value  = lng.toFixed(6);
-        if (address) {
-            document.getElementById('mapAddress').value    = address;
-            document.getElementById('mapLocationText').textContent = address;
-        } else {
-            reverseGeocode(lat, lng);
-        }
-        leafletMap.setView([lat, lng], 15);
-    }
+    const geoSection   = document.getElementById('geoSection');
+    const geoBtn       = document.getElementById('geoBtn');
+    const geoBtnText   = document.getElementById('geoBtnText');
+    const geoResult    = document.getElementById('geoResult');
+    const geoAddress   = document.getElementById('geoAddress');
+    const geoReset     = document.getElementById('geoReset');
 
     /** Reverse geocoding: coordinates → human-readable address */
     function reverseGeocode(lat, lng) {
-        document.getElementById('mapLocationText').textContent = '📍 Localisation en cours…';
-        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+        return fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=fr`)
             .then(r => r.json())
-            .then(data => {
-                const addr = data.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-                document.getElementById('mapAddress').value    = addr;
-                document.getElementById('mapLocationText').textContent = addr;
-            })
-            .catch(() => {
-                const fb = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-                document.getElementById('mapAddress').value    = fb;
-                document.getElementById('mapLocationText').textContent = fb;
-            });
+            .then(data => data.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`)
+            .catch(() => `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
     }
 
-    /** Forward geocoding: text → coordinates (Bénin first, then worldwide) */
-    function searchAddress(query) {
-        if (!query.trim()) return;
-        document.getElementById('mapLocationText').textContent = '🔍 Recherche en cours…';
+    /** Trigger geolocation + reverse geocode */
+    function detectLocation() {
+        if (!navigator.geolocation) {
+            alert('La géolocalisation n\'est pas supportée par votre navigateur.');
+            return;
+        }
 
-        const bjUrl  = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=bj`;
-        const allUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
+        // Show loading state
+        geoBtn.classList.add('loading');
+        geoBtnText.textContent = '📡 Localisation en cours…';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
 
-        fetch(bjUrl)
-            .then(r => r.json())
-            .then(res => res.length ? res : fetch(allUrl).then(r => r.json()))
-            .then(res => {
-                if (res && res.length > 0) {
-                    placeMarker(parseFloat(res[0].lat), parseFloat(res[0].lon), res[0].display_name);
-                } else {
-                    document.getElementById('mapLocationText').textContent =
-                        '❌ Adresse introuvable — cliquez directement sur la carte.';
-                }
-            })
-            .catch(() => {
-                document.getElementById('mapLocationText').textContent =
-                    '❌ Erreur réseau. Cliquez directement sur la carte.';
-            });
+        navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                const addr = await reverseGeocode(lat, lng);
+
+                // Store values
+                document.getElementById('mapLat').value     = lat.toFixed(6);
+                document.getElementById('mapLng').value     = lng.toFixed(6);
+                document.getElementById('mapAddress').value = addr;
+
+                // Update UI
+                geoAddress.textContent = addr;
+                geoBtn.style.display    = 'none';
+                geoResult.style.display = 'flex';
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            },
+            (err) => {
+                geoBtn.classList.remove('loading');
+                geoBtnText.textContent = 'Sélectionner mon emplacement';
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
+                const msgs = {
+                    1: 'Accès refusé. Veuillez autoriser la localisation dans les paramètres de votre navigateur.',
+                    2: 'Impossible de détecter votre position. Vérifiez votre connexion.',
+                    3: 'La demande de localisation a expiré. Réessayez.'
+                };
+                alert(msgs[err.code] || 'Erreur de géolocalisation.');
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
     }
 
-    /** Initialize Leaflet map (only once) */
-    function initMap() {
-        if (leafletMap) { leafletMap.invalidateSize(); return; }
-
-        // Centred on Cotonou, Bénin
-        leafletMap = L.map('map').setView([6.3654, 2.4183], 13);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© <a href="https://openstreetmap.org" target="_blank">OpenStreetMap</a>',
-            maxZoom: 19
-        }).addTo(leafletMap);
-
-        leafletMap.on('click', e => placeMarker(e.latlng.lat, e.latlng.lng, null));
-
-        // Give the DOM time to render before forcing tile refresh
-        setTimeout(() => leafletMap.invalidateSize(), 250);
+    /** Reset: hide result, show button again */
+    function resetGeo() {
+        document.getElementById('mapLat').value     = '';
+        document.getElementById('mapLng').value     = '';
+        document.getElementById('mapAddress').value = '';
+        geoResult.style.display = 'none';
+        geoBtn.style.display    = 'flex';
+        geoBtn.classList.remove('loading');
+        geoBtnText.textContent  = 'Sélectionner mon emplacement';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
     /* Toggle buttons */
-    if (btnNon && btnOui && livraisonVal && mapSection) {
+    if (btnNon && btnOui && livraisonVal && geoSection) {
         btnNon.addEventListener('click', () => {
             btnNon.classList.add('active');
             btnOui.classList.remove('active');
             livraisonVal.value = 'Non';
-            mapSection.style.display = 'none';
+            geoSection.style.display = 'none';
+            resetGeo();
             if (typeof lucide !== 'undefined') lucide.createIcons();
         });
 
@@ -263,21 +231,13 @@ document.addEventListener('DOMContentLoaded', () => {
             btnOui.classList.add('active');
             btnNon.classList.remove('active');
             livraisonVal.value = 'Oui';
-            mapSection.style.display = 'block';
-            initMap();
+            geoSection.style.display = 'block';
             if (typeof lucide !== 'undefined') lucide.createIcons();
         });
     }
 
-    /* Map search — button & Enter key */
-    const mapSearchBtn   = document.getElementById('mapSearchBtn');
-    const mapSearchInput = document.getElementById('mapSearchInput');
-    if (mapSearchBtn && mapSearchInput) {
-        mapSearchBtn.addEventListener('click', () => searchAddress(mapSearchInput.value));
-        mapSearchInput.addEventListener('keydown', e => {
-            if (e.key === 'Enter') { e.preventDefault(); searchAddress(mapSearchInput.value); }
-        });
-    }
+    if (geoBtn)   geoBtn.addEventListener('click', detectLocation);
+    if (geoReset) geoReset.addEventListener('click', resetGeo);
 
     // ----- 7. WhatsApp Order Form -----
     const orderForm = document.getElementById('orderForm');
