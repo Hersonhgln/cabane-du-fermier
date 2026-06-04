@@ -769,6 +769,16 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 400;
 }
 
+.product-status {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #2d6a4f;
+    background: #e8f5e9;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+}
+
 /* Légumes tag — distinct green shade */
 .product-category-tag.tag-legume {
     background: #2d6a4f;

@@ -119,7 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Select
                 selectedProducts.add(name);
                 card.classList.add('selected');
-                showToast(`✓ "${name}" ajouté — ${price}`);
+                if (price) {
+                    showToast(`✓ "${name}" ajouté — ${price}`);
+                } else {
+                    showToast(`✓ "${name}" ajouté à la commande`);
+                }
             }
 
             updateProductField();
