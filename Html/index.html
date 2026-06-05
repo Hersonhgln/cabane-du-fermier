@@ -212,8 +212,9 @@
                             
                             <div class="product-options-wrapper mt-3">
                                 <div class="options-toggle">
-                                    <button type="button" class="option-pill active" data-option="under500" data-price="2500" data-name="≤ 500g">≤ 500g</button>
-                                    <button type="button" class="option-pill" data-option="over900" data-price="4000" data-name="≥ 900g">≥ 900g</button>
+                                    <button type="button" class="option-pill active" data-option="under500" data-price="2500" data-name="< 500g">&lt; 500g</button>
+                                    <button type="button" class="option-pill" data-option="500to700" data-price="3000" data-name="500g - 700g">500g - 700g</button>
+                                    <button type="button" class="option-pill" data-option="700to1kg" data-price="4000" data-name="700g - 1kg">700g - 1kg</button>
                                 </div>
                             </div>
 
@@ -494,6 +495,10 @@
                             <div class="form-group" id="addressSection" style="display:none;">
                                 <label for="address">Adresse de livraison (et indications supplémentaires)</label>
                                 <textarea id="address" name="address" placeholder="Quartier, rue, repère exact..." rows="3"></textarea>
+                            </div>
+                            <div class="payment-note mt-2 mb-3" style="color: rgba(255,255,255,0.85); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="info" class="icon-xs"></i> 
+                                <span><strong>Paiement à la livraison</strong> ou au retrait.</span>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-full shadow-md" id="submitOrderBtn" disabled>
