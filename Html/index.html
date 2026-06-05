@@ -73,9 +73,9 @@
             <div class="desktop-menu">
                 <a href="#accueil" class="nav-link">Accueil</a>
                 <a href="#propos" class="nav-link">À Propos</a>
-                <a href="catalogue.html" class="nav-link">Nos Produits</a>
+                <a href="#produits" class="nav-link">Nos Produits</a>
                 <a href="#contact" class="nav-link">Contact</a>
-                <a href="catalogue.html#commander" class="btn btn-primary nav-btn">
+                <a href="#commander" class="btn btn-primary nav-btn">
                     <i data-lucide="shopping-bag" class="icon-sm"></i> Commander
                 </a>
             </div>
@@ -89,9 +89,9 @@
         <div class="mobile-menu" id="mobile-menu">
             <a href="#accueil" class="mobile-nav-link">Accueil</a>
             <a href="#propos" class="mobile-nav-link">À Propos</a>
-            <a href="catalogue.html" class="mobile-nav-link">Nos Produits</a>
+            <a href="#produits" class="mobile-nav-link">Nos Produits</a>
             <a href="#contact" class="mobile-nav-link">Contact</a>
-            <a href="catalogue.html#commander" class="btn btn-primary mobile-nav-btn">Commander</a>
+            <a href="#commander" class="btn btn-primary mobile-nav-btn">Commander</a>
         </div>
     </nav>
 
@@ -111,7 +111,7 @@
                         éleveurs partenaires.
                     </p>
                     <div class="hero-actions">
-                        <a href="catalogue.html#commander" class="btn btn-primary hero-btn">
+                        <a href="#commander" class="btn btn-primary hero-btn">
                             <i data-lucide="shopping-bag" class="icon-sm"></i> Commander maintenant
                         </a>
                         <a href="#produits" class="btn btn-outline hero-btn-outline">
@@ -200,93 +200,308 @@
                 <div class="products-grid" id="products-grid">
 
                     <!-- Poulet Bicyclette -->
-                    <div class="product-card" data-category="volailles">
+                    <div class="product-card" data-category="volailles" data-product-id="poulet">
                         <div class="product-img-wrapper">
-                            <img src="../images/poulet_bicyclette.jpg" alt="Poulet Bicyclette" class="product-img" loading="lazy">
+                            <img src="../images/bicyclette.png" alt="Poulet Bicyclette" class="product-img" loading="lazy">
                             <span class="product-category-tag">Volailles</span>
+                            <span class="product-selected-badge">✓ Sélectionné</span>
                         </div>
                         <div class="product-info">
                             <h3 class="product-name">Poulet Bicyclette</h3>
                             <p class="product-desc">Élevé en plein air, ce poulet fermier à la chair ferme et savoureuse est le favori des familles béninoises.</p>
+                            
+                            <div class="product-options-wrapper mt-3">
+                                <div class="options-toggle">
+                                    <button type="button" class="option-pill active" data-option="under500" data-price="2500" data-name="≤ 500g">≤ 500g</button>
+                                    <button type="button" class="option-pill" data-option="over900" data-price="4000" data-name="≥ 900g">≥ 900g</button>
+                                </div>
+                            </div>
+
+                            <div class="product-bottom mt-3">
+                                <span class="product-price-display">2500 F</span>
+                                <div class="product-cart-controls">
+                                    <button type="button" class="btn-icon-link add-to-order add-btn" title="Ajouter à ma commande">
+                                        <i data-lucide="shopping-cart" class="icon-sm"></i>
+                                    </button>
+                                    <div class="qty-control" style="display: none;">
+                                        <button type="button" class="btn-qty btn-minus"><i data-lucide="minus" class="icon-xs"></i></button>
+                                        <span class="qty-val">1</span>
+                                        <button type="button" class="btn-qty btn-plus"><i data-lucide="plus" class="icon-xs"></i></button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Lapin -->
-                    <div class="product-card" data-category="viandes">
+                    <div class="product-card" data-category="viandes" data-product-id="lapin">
                         <div class="product-img-wrapper">
-                            <img src="../images/lapin.jpg" alt="Lapin" class="product-img" loading="lazy">
+                            <img src="../images/Lapin.png" alt="Lapin" class="product-img" loading="lazy">
                             <span class="product-category-tag">Viandes</span>
+                            <span class="product-selected-badge">✓ Sélectionné</span>
                         </div>
                         <div class="product-info">
                             <h3 class="product-name">Lapin</h3>
                             <p class="product-desc">Viande tendre et maigre, le lapin fermier est élevé dans des conditions saines pour une qualité optimale.</p>
+                            
+                            <div class="product-options-wrapper mt-3" style="display: none;">
+                                <div class="options-toggle">
+                                    <button type="button" class="option-pill active" data-option="1kg" data-price="4000" data-name="1kg">1kg</button>
+                                </div>
+                            </div>
+
+                            <div class="product-bottom mt-3">
+                                <span class="product-price-display">4000 F</span>
+                                <div class="product-cart-controls">
+                                    <button type="button" class="btn-icon-link add-to-order add-btn" title="Ajouter à ma commande">
+                                        <i data-lucide="shopping-cart" class="icon-sm"></i>
+                                    </button>
+                                    <div class="qty-control" style="display: none;">
+                                        <button type="button" class="btn-qty btn-minus"><i data-lucide="minus" class="icon-xs"></i></button>
+                                        <span class="qty-val">1</span>
+                                        <button type="button" class="btn-qty btn-plus"><i data-lucide="plus" class="icon-xs"></i></button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Escargot -->
-                    <div class="product-card" data-category="viandes">
+                    <div class="product-card" data-category="viandes" data-product-id="escargot">
                         <div class="product-img-wrapper">
-                            <img src="../images/escargot_img.jpg" alt="Escargot" class="product-img" loading="lazy">
+                            <img src="../images/escargot.png" alt="Escargot" class="product-img" loading="lazy">
                             <span class="product-category-tag">Viandes</span>
+                            <span class="product-selected-badge">✓ Sélectionné</span>
                         </div>
                         <div class="product-info">
                             <h3 class="product-name">Escargot</h3>
                             <p class="product-desc">Mets raffiné et nutritif, l'escargot offre une viande maigre riche en minéraux, très apprécié au Bénin.</p>
+                            
+                            <div class="product-options-wrapper mt-3" style="display: none;">
+                                <div class="options-toggle">
+                                    <button type="button" class="option-pill active" data-option="500g" data-price="6000" data-name="Sachet 500g">Sachet 500g</button>
+                                </div>
+                            </div>
+
+                            <div class="product-bottom mt-3">
+                                <span class="product-price-display">6000 F</span>
+                                <div class="product-cart-controls">
+                                    <button type="button" class="btn-icon-link add-to-order add-btn" title="Ajouter à ma commande">
+                                        <i data-lucide="shopping-cart" class="icon-sm"></i>
+                                    </button>
+                                    <div class="qty-control" style="display: none;">
+                                        <button type="button" class="btn-qty btn-minus"><i data-lucide="minus" class="icon-xs"></i></button>
+                                        <span class="qty-val">1</span>
+                                        <button type="button" class="btn-qty btn-plus"><i data-lucide="plus" class="icon-xs"></i></button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Cailles -->
-                    <div class="product-card" data-category="volailles">
+                    <div class="product-card" data-category="volailles" data-product-id="cailles">
                         <div class="product-img-wrapper">
-                            <img src="../images/cailles.jpg" alt="Cailles" class="product-img" loading="lazy">
+                            <img src="../images/Cailles.png" alt="Cailles" class="product-img" loading="lazy">
                             <span class="product-category-tag">Volailles</span>
+                            <span class="product-selected-badge">✓ Sélectionné</span>
                         </div>
                         <div class="product-info">
                             <h3 class="product-name">Cailles</h3>
                             <p class="product-desc">Petites volailles à la chair délicate et savoureuse, les cailles sont élevées localement avec soin.</p>
+                            
+                            <div class="product-options-wrapper mt-3">
+                                <div class="options-toggle">
+                                    <button type="button" class="option-pill active" data-option="unite" data-price="1200" data-name="L'unité">L'unité</button>
+                                    <button type="button" class="option-pill" data-option="pack4" data-price="4500" data-name="Pack de 4">Pack de 4</button>
+                                </div>
+                            </div>
+
+                            <div class="product-bottom mt-3">
+                                <span class="product-price-display">1200 F</span>
+                                <div class="product-cart-controls">
+                                    <button type="button" class="btn-icon-link add-to-order add-btn" title="Ajouter à ma commande">
+                                        <i data-lucide="shopping-cart" class="icon-sm"></i>
+                                    </button>
+                                    <div class="qty-control" style="display: none;">
+                                        <button type="button" class="btn-qty btn-minus"><i data-lucide="minus" class="icon-xs"></i></button>
+                                        <span class="qty-val">1</span>
+                                        <button type="button" class="btn-qty btn-plus"><i data-lucide="plus" class="icon-xs"></i></button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Tchayo -->
-                    <div class="product-card" data-category="legumes">
+                    <div class="product-card" data-category="legumes" data-product-id="tchayo">
                         <div class="product-img-wrapper">
-                            <img src="../images/tchayo.jpg" alt="Tchayo" class="product-img" loading="lazy">
+                            <img src="../images/Tchayo.png" alt="Tchayo" class="product-img" loading="lazy">
                             <span class="product-category-tag tag-legume">Légumes</span>
+                            <span class="product-selected-badge">✓ Sélectionné</span>
                         </div>
                         <div class="product-info">
                             <h3 class="product-name">Tchayo</h3>
                             <p class="product-desc">Légume traditionnel béninois précuit avec soin, le tchayo est riche en nutriments et en saveurs authentiques.</p>
+                            
+                            <div class="product-options-wrapper mt-3" style="display: none;">
+                                <div class="options-toggle">
+                                    <button type="button" class="option-pill active" data-option="500g" data-price="1000" data-name="Sachet 500g">Sachet 500g</button>
+                                </div>
+                            </div>
+
+                            <div class="product-bottom mt-3">
+                                <span class="product-price-display">1000 F</span>
+                                <div class="product-cart-controls">
+                                    <button type="button" class="btn-icon-link add-to-order add-btn" title="Ajouter à ma commande">
+                                        <i data-lucide="shopping-cart" class="icon-sm"></i>
+                                    </button>
+                                    <div class="qty-control" style="display: none;">
+                                        <button type="button" class="btn-qty btn-minus"><i data-lucide="minus" class="icon-xs"></i></button>
+                                        <span class="qty-val">1</span>
+                                        <button type="button" class="btn-qty btn-plus"><i data-lucide="plus" class="icon-xs"></i></button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Gboma -->
-                    <div class="product-card" data-category="legumes">
+                    <div class="product-card" data-category="legumes" data-product-id="gboma">
                         <div class="product-img-wrapper">
-                            <img src="../images/gboma.jpg" alt="Gboma" class="product-img" loading="lazy">
+                            <img src="../images/Gboman.png" alt="Gboma" class="product-img" loading="lazy">
                             <span class="product-category-tag tag-legume">Légumes</span>
+                            <span class="product-selected-badge">✓ Sélectionné</span>
                         </div>
                         <div class="product-info">
                             <h3 class="product-name">Gboma</h3>
                             <p class="product-desc">Feuilles de morelle noire, le gboma est un incontournable de la cuisine béninoise, préparé avec soin.</p>
+                            
+                            <div class="product-options-wrapper mt-3" style="display: none;">
+                                <div class="options-toggle">
+                                    <button type="button" class="option-pill active" data-option="500g" data-price="1000" data-name="Sachet 500g">Sachet 500g</button>
+                                </div>
+                            </div>
+
+                            <div class="product-bottom mt-3">
+                                <span class="product-price-display">1000 F</span>
+                                <div class="product-cart-controls">
+                                    <button type="button" class="btn-icon-link add-to-order add-btn" title="Ajouter à ma commande">
+                                        <i data-lucide="shopping-cart" class="icon-sm"></i>
+                                    </button>
+                                    <div class="qty-control" style="display: none;">
+                                        <button type="button" class="btn-qty btn-minus"><i data-lucide="minus" class="icon-xs"></i></button>
+                                        <span class="qty-val">1</span>
+                                        <button type="button" class="btn-qty btn-plus"><i data-lucide="plus" class="icon-xs"></i></button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Aman vivè (Vernonia) -->
-                    <div class="product-card" data-category="legumes">
+                    <div class="product-card" data-category="legumes" data-product-id="amanvive">
                         <div class="product-img-wrapper">
-                            <img src="../images/vernonia.jpg" alt="Aman vivè" class="product-img" loading="lazy">
+                            <img src="../images/Amanvivè.png" alt="Aman vivè" class="product-img" loading="lazy">
                             <span class="product-category-tag tag-legume">Légumes</span>
+                            <span class="product-selected-badge">✓ Sélectionné</span>
                         </div>
                         <div class="product-info">
-                            <h3 class="product-name">Aman vivè <span class="product-local-name">(Vernonia)</span></h3>
+                            <h3 class="product-name">Amanvivè <span class="product-local-name">(Vernonia)</span></h3>
                             <p class="product-desc">La feuille amère, ou Vernonia, est un légume traditionnel africain aux vertus nutritionnelles exceptionnelles.</p>
+                            
+                            <div class="product-options-wrapper mt-3" style="display: none;">
+                                <div class="options-toggle">
+                                    <button type="button" class="option-pill active" data-option="500g" data-price="1000" data-name="Sachet 500g">Sachet 500g</button>
+                                </div>
+                            </div>
+
+                            <div class="product-bottom mt-3">
+                                <span class="product-price-display">1000 F</span>
+                                <div class="product-cart-controls">
+                                    <button type="button" class="btn-icon-link add-to-order add-btn" title="Ajouter à ma commande">
+                                        <i data-lucide="shopping-cart" class="icon-sm"></i>
+                                    </button>
+                                    <div class="qty-control" style="display: none;">
+                                        <button type="button" class="btn-qty btn-minus"><i data-lucide="minus" class="icon-xs"></i></button>
+                                        <span class="qty-val">1</span>
+                                        <button type="button" class="btn-qty btn-plus"><i data-lucide="plus" class="icon-xs"></i></button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                 </div>
 
-                <div class="text-center mt-12">
-                    <a href="catalogue.html" class="btn btn-primary">Voir le Catalogue Complet</a>
+                <!-- products grid ends here -->
+            </div>
+        </section>
+
+        <!-- Order Form Section -->
+        <section id="commander" class="order-section section motif-bg reveal">
+            <div class="container">
+                <div class="order-wrapper">
+                    <div class="order-content">
+                        <span class="section-badge badge-white">Passer Commande</span>
+                        <h2 class="text-white">Votre Panier</h2>
+                        <p class="text-white-muted">
+                            Vérifiez les articles sélectionnés et remplissez le formulaire pour finaliser votre commande directement via WhatsApp.
+                        </p>
+                        
+                        <div class="cart-summary-container mt-12">
+                            <div id="cart-empty-msg" class="cart-empty-msg">
+                                <i data-lucide="shopping-cart" class="icon-lg"></i>
+                                <p>Votre panier est vide. Sélectionnez des produits ci-dessus.</p>
+                            </div>
+                            <ul id="cart-items-list" class="cart-items-list" style="display: none;">
+                                <!-- Items injected by JS -->
+                            </ul>
+                            <div id="cart-total-container" class="cart-total-container" style="display: none;">
+                                <span>Total</span>
+                                <span id="cart-total-price">0 F</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-form-container">
+                        <form id="orderForm" class="order-form">
+                            <div class="form-group">
+                                <label for="name">Votre Nom & Prénoms</label>
+                                <input type="text" id="name" name="name" placeholder="Ex: Ariane Amoussou" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contactInfo">Votre Numéro WhatsApp</label>
+                                <input type="tel" id="contactInfo" name="contactInfo" placeholder="+229 XX XX XX XX" required>
+                            </div>
+
+                            <!-- Livraison Toggle -->
+                            <div class="form-group">
+                                <label>Mode de réception</label>
+                                <div class="livraison-toggle">
+                                    <button type="button" class="toggle-btn active" id="livraisonNon" data-value="Non">
+                                        <i data-lucide="store" class="icon-sm"></i> Retrait sur place
+                                    </button>
+                                    <button type="button" class="toggle-btn" id="livraisonOui" data-value="Oui">
+                                        <i data-lucide="truck" class="icon-sm"></i> Livraison à domicile
+                                    </button>
+                                </div>
+                                <input type="hidden" id="livraisonValue" value="Non">
+                            </div>
+
+                            <!-- Bloc adresse -->
+                            <div class="form-group" id="addressSection" style="display:none;">
+                                <label for="address">Adresse de livraison (et indications supplémentaires)</label>
+                                <textarea id="address" name="address" placeholder="Quartier, rue, repère exact..." rows="3"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-full shadow-md" id="submitOrderBtn" disabled>
+                                <i data-lucide="message-circle" class="icon-sm"></i>
+                                Confirmer sur WhatsApp
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </section>

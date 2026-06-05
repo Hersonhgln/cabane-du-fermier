@@ -72,162 +72,184 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ----- 5b. Add-to-order: cart button selection -----
-    /* Create a toast element once */
-    const toast = document.createElement('div');
-    toast.className = 'order-toast';
-    toast.innerHTML = `<span class="toast-icon">🛒</span><span class="toast-msg"></span>`;
-    document.body.appendChild(toast);
+    // ----- 5b. Cart Logic & Dynamic Ordering -----
+    const cart = {}; // cart state: key = productId + "_" + optionId, value = { product, optionId, optionName, price, qty }
 
-    let toastTimer = null;
-    function showToast(msg) {
-        toast.querySelector('.toast-msg').textContent = msg;
-        toast.classList.add('show');
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
-    }
+    function updateCartUI() {
+        let total = 0;
+        const listEl = document.getElementById('cart-items-list');
+        const emptyMsg = document.getElementById('cart-empty-msg');
+        const totalContainer = document.getElementById('cart-total-container');
+        const totalPriceEl = document.getElementById('cart-total-price');
+        const submitBtn = document.getElementById('submitOrderBtn');
 
-    /** Set the product field from the selectedProducts Set */
-    const selectedProducts = new Set();
-    const productInput = document.getElementById('product');
+        if (!listEl) return;
 
-    function updateProductField() {
-        if (productInput) {
-            productInput.value = [...selectedProducts].join(', ');
+        listEl.innerHTML = '';
+        let hasItems = false;
+
+        Object.values(cart).forEach(item => {
+            if (item.qty > 0) {
+                hasItems = true;
+                const subtotal = item.price * item.qty;
+                total += subtotal;
+
+                const li = document.createElement('li');
+                li.className = 'cart-item';
+                li.innerHTML = `
+                    <div class="cart-item-info">
+                        <span class="cart-item-name">${item.product}</span>
+                        <span class="cart-item-option">${item.optionName} x ${item.qty}</span>
+                    </div>
+                    <span class="cart-item-price">${subtotal} F</span>
+                `;
+                listEl.appendChild(li);
+            }
+        });
+
+        if (hasItems) {
+            emptyMsg.style.display = 'none';
+            listEl.style.display = 'flex';
+            totalContainer.style.display = 'flex';
+            totalPriceEl.textContent = total + ' F';
+            submitBtn.removeAttribute('disabled');
+        } else {
+            emptyMsg.style.display = 'flex';
+            listEl.style.display = 'none';
+            totalContainer.style.display = 'none';
+            submitBtn.setAttribute('disabled', 'true');
         }
-    }
 
-    /* Attach click handler to every cart button */
-    document.querySelectorAll('.add-to-order').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const card      = btn.closest('.product-card');
-            const name      = btn.getAttribute('data-product');
-            const price     = btn.getAttribute('data-price');
+        // Update product cards UI
+        document.querySelectorAll('.product-card').forEach(card => {
+            const productId = card.getAttribute('data-product-id');
+            const activeOptionBtn = card.querySelector('.option-pill.active');
+            if (activeOptionBtn) {
+                const optionId = activeOptionBtn.getAttribute('data-option');
+                const cartKey = productId + "_" + optionId;
+                const qty = cart[cartKey] ? cart[cartKey].qty : 0;
+                
+                const addBtn = card.querySelector('.add-btn');
+                const qtyControl = card.querySelector('.qty-control');
+                const qtyVal = card.querySelector('.qty-val');
+                const badge = card.querySelector('.product-selected-badge');
 
-            // Bounce animation
-            btn.classList.remove('bounce');
-            void btn.offsetWidth; // reflow
-            btn.classList.add('bounce');
-            btn.addEventListener('animationend', () => btn.classList.remove('bounce'), { once: true });
-
-            if (selectedProducts.has(name)) {
-                // Deselect
-                selectedProducts.delete(name);
-                card.classList.remove('selected');
-                showToast(`❌ "${name}" retiré de la commande`);
-            } else {
-                // Select
-                selectedProducts.add(name);
-                card.classList.add('selected');
-                if (price) {
-                    showToast(`✓ "${name}" ajouté — ${price}`);
+                if (qty > 0) {
+                    if (addBtn) addBtn.style.display = 'none';
+                    if (qtyControl) qtyControl.style.display = 'flex';
+                    if (qtyVal) qtyVal.textContent = qty;
+                    if (badge) badge.style.opacity = '1';
                 } else {
-                    showToast(`✓ "${name}" ajouté à la commande`);
+                    if (addBtn) addBtn.style.display = 'inline-flex';
+                    if (qtyControl) qtyControl.style.display = 'none';
+                    if (badge) badge.style.opacity = '0';
                 }
             }
+        });
+    }
 
-            updateProductField();
+    function updateCardPriceDisplay(card, optionBtn) {
+        const price = optionBtn.getAttribute('data-price');
+        const display = card.querySelector('.product-price-display');
+        if (display) display.textContent = price + ' F';
+    }
 
-            // Smooth scroll to the form only on first selection
-            if (selectedProducts.size === 1 && !selectedProducts._scrolled) {
-                selectedProducts._scrolled = true;
-                const formSection = document.getElementById('commander');
-                if (formSection) {
-                    setTimeout(() => {
-                        window.scrollTo({
-                            top: formSection.offsetTop - (navbar ? navbar.offsetHeight : 0),
-                            behavior: 'smooth'
-                        });
-                    }, 400);
+    // Option pills click handlers
+    document.querySelectorAll('.option-pill').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const card = e.target.closest('.product-card');
+            // Remove active class from siblings
+            card.querySelectorAll('.option-pill').forEach(sib => sib.classList.remove('active'));
+            btn.classList.add('active');
+            updateCardPriceDisplay(card, btn);
+            updateCartUI(); // Update UI to reflect the selected option's quantity
+        });
+    });
+
+    // Add to cart button
+    document.querySelectorAll('.add-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const card = e.target.closest('.product-card');
+            const productId = card.getAttribute('data-product-id');
+            const productName = card.querySelector('.product-name').textContent;
+            const activeOptionBtn = card.querySelector('.option-pill.active');
+            
+            if (activeOptionBtn) {
+                const optionId = activeOptionBtn.getAttribute('data-option');
+                const optionName = activeOptionBtn.getAttribute('data-name');
+                const price = parseInt(activeOptionBtn.getAttribute('data-price'));
+                const cartKey = productId + "_" + optionId;
+
+                if (!cart[cartKey]) {
+                    cart[cartKey] = { product: productName, optionId, optionName, price, qty: 0 };
+                }
+                cart[cartKey].qty = 1;
+                updateCartUI();
+                
+                // Scroll to commander section on first add
+                let totalItems = 0;
+                Object.values(cart).forEach(item => totalItems += item.qty);
+                if (totalItems === 1) {
+                    const formSection = document.getElementById('commander');
+                    if (formSection) {
+                        setTimeout(() => {
+                            window.scrollTo({
+                                top: formSection.offsetTop - (navbar ? navbar.offsetHeight : 0),
+                                behavior: 'smooth'
+                            });
+                        }, 400);
+                    }
                 }
             }
         });
     });
 
-    // ----- 6. Livraison Toggle + Géolocalisation -----
+    // Quantity minus/plus
+    document.querySelectorAll('.btn-minus').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const card = e.target.closest('.product-card');
+            const productId = card.getAttribute('data-product-id');
+            const activeOptionBtn = card.querySelector('.option-pill.active');
+            if (activeOptionBtn) {
+                const optionId = activeOptionBtn.getAttribute('data-option');
+                const cartKey = productId + "_" + optionId;
+                if (cart[cartKey] && cart[cartKey].qty > 0) {
+                    cart[cartKey].qty--;
+                    updateCartUI();
+                }
+            }
+        });
+    });
+    document.querySelectorAll('.btn-plus').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const card = e.target.closest('.product-card');
+            const productId = card.getAttribute('data-product-id');
+            const activeOptionBtn = card.querySelector('.option-pill.active');
+            if (activeOptionBtn) {
+                const optionId = activeOptionBtn.getAttribute('data-option');
+                const cartKey = productId + "_" + optionId;
+                if (cart[cartKey]) {
+                    cart[cartKey].qty++;
+                    updateCartUI();
+                }
+            }
+        });
+    });
+
+    // ----- 6. Livraison Toggle -----
     const btnNon       = document.getElementById('livraisonNon');
     const btnOui       = document.getElementById('livraisonOui');
     const livraisonVal = document.getElementById('livraisonValue');
-    const geoSection   = document.getElementById('geoSection');
-    const geoBtn       = document.getElementById('geoBtn');
-    const geoBtnText   = document.getElementById('geoBtnText');
-    const geoResult    = document.getElementById('geoResult');
-    const geoAddress   = document.getElementById('geoAddress');
-    const geoReset     = document.getElementById('geoReset');
+    const addressSection = document.getElementById('addressSection');
+    const addressInput = document.getElementById('address');
 
-    /** Reverse geocoding: coordinates → human-readable address */
-    function reverseGeocode(lat, lng) {
-        return fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=fr`)
-            .then(r => r.json())
-            .then(data => data.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`)
-            .catch(() => `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
-    }
-
-    /** Trigger geolocation + reverse geocode */
-    function detectLocation() {
-        if (!navigator.geolocation) {
-            alert('La géolocalisation n\'est pas supportée par votre navigateur.');
-            return;
-        }
-
-        // Show loading state
-        geoBtn.classList.add('loading');
-        geoBtnText.textContent = '📡 Localisation en cours…';
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-
-        navigator.geolocation.getCurrentPosition(
-            async (pos) => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-                const addr = await reverseGeocode(lat, lng);
-
-                // Store values
-                document.getElementById('mapLat').value     = lat.toFixed(6);
-                document.getElementById('mapLng').value     = lng.toFixed(6);
-                document.getElementById('mapAddress').value = addr;
-
-                // Update UI
-                geoAddress.textContent = addr;
-                geoBtn.style.display    = 'none';
-                geoResult.style.display = 'flex';
-                if (typeof lucide !== 'undefined') lucide.createIcons();
-            },
-            (err) => {
-                geoBtn.classList.remove('loading');
-                geoBtnText.textContent = 'Sélectionner mon emplacement';
-                if (typeof lucide !== 'undefined') lucide.createIcons();
-
-                const msgs = {
-                    1: 'Accès refusé. Veuillez autoriser la localisation dans les paramètres de votre navigateur.',
-                    2: 'Impossible de détecter votre position. Vérifiez votre connexion.',
-                    3: 'La demande de localisation a expiré. Réessayez.'
-                };
-                alert(msgs[err.code] || 'Erreur de géolocalisation.');
-            },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        );
-    }
-
-    /** Reset: hide result, show button again */
-    function resetGeo() {
-        document.getElementById('mapLat').value     = '';
-        document.getElementById('mapLng').value     = '';
-        document.getElementById('mapAddress').value = '';
-        geoResult.style.display = 'none';
-        geoBtn.style.display    = 'flex';
-        geoBtn.classList.remove('loading');
-        geoBtnText.textContent  = 'Sélectionner mon emplacement';
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-    }
-
-    /* Toggle buttons */
-    if (btnNon && btnOui && livraisonVal && geoSection) {
+    if (btnNon && btnOui && livraisonVal && addressSection) {
         btnNon.addEventListener('click', () => {
             btnNon.classList.add('active');
             btnOui.classList.remove('active');
             livraisonVal.value = 'Non';
-            geoSection.style.display = 'none';
-            resetGeo();
+            addressSection.style.display = 'none';
+            if (addressInput) addressInput.removeAttribute('required');
             if (typeof lucide !== 'undefined') lucide.createIcons();
         });
 
@@ -235,54 +257,58 @@ document.addEventListener('DOMContentLoaded', () => {
             btnOui.classList.add('active');
             btnNon.classList.remove('active');
             livraisonVal.value = 'Oui';
-            geoSection.style.display = 'block';
+            addressSection.style.display = 'flex';
+            if (addressInput) addressInput.setAttribute('required', 'true');
             if (typeof lucide !== 'undefined') lucide.createIcons();
         });
     }
 
-    if (geoBtn)   geoBtn.addEventListener('click', detectLocation);
-    if (geoReset) geoReset.addEventListener('click', resetGeo);
-
-    // ----- 7. WhatsApp Order Form -----
+    // ----- 7. WhatsApp Order Form Submit -----
     const orderForm = document.getElementById('orderForm');
     if (orderForm) {
         orderForm.addEventListener('submit', e => {
             e.preventDefault();
 
             const name        = document.getElementById('name')?.value.trim()        || '';
-            const product     = document.getElementById('product')?.value.trim()     || '';
-            const quantity    = document.getElementById('quantity')?.value.trim()    || '';
             const contactInfo = document.getElementById('contactInfo')?.value.trim() || '';
             const livraison   = livraisonVal ? livraisonVal.value : 'Non';
+            const address     = addressInput?.value.trim() || '';
 
-            if (!name || !product || !quantity || !contactInfo) {
+            if (!name || !contactInfo) {
                 alert('Veuillez remplir tous les champs obligatoires.');
                 return;
             }
-
-            const lat     = document.getElementById('mapLat')?.value     || '';
-            const lng     = document.getElementById('mapLng')?.value     || '';
-            const address = document.getElementById('mapAddress')?.value || '';
-
-            if (livraison === 'Oui' && !lat) {
-                alert('📍 Veuillez indiquer votre adresse de livraison sur la carte.');
-                document.getElementById('mapSection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (livraison === 'Oui' && !address) {
+                alert('Veuillez indiquer votre adresse de livraison.');
+                addressInput.focus();
                 return;
             }
 
-            // Compose the WhatsApp message
             let msg = `🛒 *Nouvelle commande — Cabane du Fermier*\n\n`;
+            
+            let orderTotal = 0;
+            let hasItems = false;
+            Object.values(cart).forEach(item => {
+                if (item.qty > 0) {
+                    hasItems = true;
+                    const subtotal = item.price * item.qty;
+                    orderTotal += subtotal;
+                    msg += `- ${item.product} (${item.optionName}) x${item.qty} : ${subtotal} F\n`;
+                }
+            });
+
+            if (!hasItems) {
+                alert('Votre panier est vide.');
+                return;
+            }
+
+            msg += `\n*Total : ${orderTotal} F*\n\n`;
             msg += `👤 *Nom :* ${name}\n`;
-            msg += `📦 *Produit(s) :* ${product}\n`;
-            msg += `🔢 *Quantité :* ${quantity}\n`;
-            msg += `📱 *WhatsApp :* ${contactInfo}\n`;
-            msg += `🚚 *Livraison à domicile :* ${livraison}\n`;
+            msg += `📱 *WhatsApp / Contact :* ${contactInfo}\n`;
+            msg += `🚚 *Livraison :* ${livraison === 'Oui' ? 'À domicile' : 'Retrait sur place'}\n`;
 
             if (livraison === 'Oui') {
-                msg += `\n📍 *Adresse de livraison :*\n${address}\n`;
-                if (lat && lng) {
-                    msg += `🗺️ *Voir sur Google Maps :* https://maps.google.com/?q=${lat},${lng}\n`;
-                }
+                msg += `📍 *Adresse et indications :*\n${address}\n`;
             }
 
             msg += `\nMerci de traiter ma commande. 🙏`;
@@ -293,6 +319,9 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         });
     }
+
+    // Initialize UI on load
+    updateCartUI();
 
     // ----- 8. Scroll Reveal Animation -----
     const revealEls = document.querySelectorAll('.reveal');
