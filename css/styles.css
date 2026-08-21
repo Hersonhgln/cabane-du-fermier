@@ -1943,3 +1943,148 @@ h1, h2, h3, h4, h5, h6 {
     padding-top: 1rem;
     border-top: 2px dashed rgba(255, 255, 255, 0.3);
 }
+
+/* ============================================
+   MAP & GEOLOCATION STYLES
+   ============================================ */
+.map-wrapper {
+    position: relative;
+    width: 100%;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow-sm);
+}
+
+#delivery-map {
+    width: 100%;
+    height: 220px;
+    z-index: 1;
+    background: #e5e3df;
+}
+
+.map-overlay-hint {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 500;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(4px);
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    pointer-events: none;
+}
+
+.btn-geolocate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    background: var(--surface);
+    border: 1.5px solid var(--primary-light);
+    color: var(--primary-dark);
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.7rem 1rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--duration) var(--ease);
+    margin-top: 0.6rem;
+}
+.btn-geolocate:hover {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-sm);
+}
+.btn-geolocate:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.geo-status {
+    font-size: 0.8rem;
+    margin-top: 0.35rem;
+    font-weight: 500;
+    min-height: 1.2rem;
+}
+.geo-status.success {
+    color: var(--primary-dark);
+}
+.geo-status.error {
+    color: #d90429;
+}
+
+.geo-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(45, 106, 79, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-dark);
+    animation: geoSpin 0.8s linear infinite;
+}
+@keyframes geoSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* Custom Leaflet Marker */
+.custom-map-marker {
+    position: relative;
+}
+.marker-pin {
+    width: 30px;
+    height: 30px;
+    border-radius: 50% 50% 50% 0;
+    background: var(--primary);
+    position: absolute;
+    transform: rotate(-45deg);
+    left: 50%;
+    top: 50%;
+    margin: -20px 0 0 -15px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.marker-pin::after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    margin: 8px 0 0 8px;
+    background: #fff;
+    position: absolute;
+    border-radius: 50%;
+}
+.marker-pulse {
+    background: rgba(45, 106, 79, 0.3);
+    border-radius: 50%;
+    height: 14px;
+    width: 14px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: 10px 0 0 -7px;
+    transform: rotateX(55deg);
+    z-index: -1;
+    animation: pulseMarker 1.5s ease-out infinite;
+}
+@keyframes pulseMarker {
+    0% {
+        transform: scale(0.5);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+

@@ -236,12 +236,136 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ----- 6. Livraison Toggle -----
-    const btnNon       = document.getElementById('livraisonNon');
-    const btnOui       = document.getElementById('livraisonOui');
-    const livraisonVal = document.getElementById('livraisonValue');
+    // ----- 6. Livraison Toggle + Carte Leaflet -----
+    const btnNon         = document.getElementById('livraisonNon');
+    const btnOui         = document.getElementById('livraisonOui');
+    const livraisonVal   = document.getElementById('livraisonValue');
     const addressSection = document.getElementById('addressSection');
-    const addressInput = document.getElementById('address');
+    const addressInput   = document.getElementById('address');
+    const deliveryLatEl  = document.getElementById('deliveryLat');
+    const deliveryLngEl  = document.getElementById('deliveryLng');
+    const btnGeolocate   = document.getElementById('btnGeolocate');
+    const geoStatus      = document.getElementById('geoStatus');
+
+    let deliveryMap    = null;
+    let deliveryMarker = null;
+    let mapInitialized = false;
+
+    // Default center: Cotonou, Bénin
+    const DEFAULT_LAT = 6.3703;
+    const DEFAULT_LNG = 2.3912;
+
+    function setGeoStatus(msg, type) {
+        if (!geoStatus) return;
+        geoStatus.textContent = msg;
+        geoStatus.className = 'geo-status ' + (type || '');
+    }
+
+    function reverseGeocode(lat, lng) {
+        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=fr`;
+        fetch(url, { headers: { 'Accept-Language': 'fr' } })
+            .then(r => r.json())
+            .then(data => {
+                if (data && data.display_name && addressInput) {
+                    addressInput.value = data.display_name;
+                }
+            })
+            .catch(() => {
+                // Geocoding échoué, l'utilisateur peut saisir manuellement
+            });
+    }
+
+    function updateMarkerPosition(lat, lng) {
+        if (deliveryLatEl) deliveryLatEl.value = lat.toFixed(6);
+        if (deliveryLngEl) deliveryLngEl.value = lng.toFixed(6);
+        reverseGeocode(lat, lng);
+    }
+
+    function initMap(lat, lng) {
+        if (!mapInitialized && typeof L !== 'undefined') {
+            deliveryMap = L.map('delivery-map', { zoomControl: true }).setView([lat, lng], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                maxZoom: 19
+            }).addTo(deliveryMap);
+
+            // Custom marker icon
+            const customIcon = L.divIcon({
+                className: 'custom-map-marker',
+                html: '<div class="marker-pin"><div class="marker-pulse"></div></div>',
+                iconSize: [30, 42],
+                iconAnchor: [15, 42]
+            });
+
+            deliveryMarker = L.marker([lat, lng], {
+                draggable: true,
+                icon: customIcon
+            }).addTo(deliveryMap);
+
+            deliveryMarker.on('dragend', function(e) {
+                const pos = e.target.getLatLng();
+                updateMarkerPosition(pos.lat, pos.lng);
+                setGeoStatus('📍 Position ajustée manuellement.', 'success');
+            });
+
+            // Click on map to move marker
+            deliveryMap.on('click', function(e) {
+                deliveryMarker.setLatLng(e.latlng);
+                updateMarkerPosition(e.latlng.lat, e.latlng.lng);
+                setGeoStatus('📍 Position sélectionnée sur la carte.', 'success');
+            });
+
+            updateMarkerPosition(lat, lng);
+            mapInitialized = true;
+
+            // Forcer le recalcul de la taille après l'affichage du conteneur
+            setTimeout(() => deliveryMap.invalidateSize(), 200);
+        } else if (mapInitialized && deliveryMap) {
+            deliveryMap.setView([lat, lng], 15);
+            if (deliveryMarker) {
+                deliveryMarker.setLatLng([lat, lng]);
+                updateMarkerPosition(lat, lng);
+            }
+            setTimeout(() => deliveryMap.invalidateSize(), 200);
+        }
+    }
+
+    // Bouton géolocalisation automatique
+    if (btnGeolocate) {
+        btnGeolocate.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                setGeoStatus('❌ La géolocalisation n\'est pas supportée par votre navigateur.', 'error');
+                return;
+            }
+            btnGeolocate.disabled = true;
+            btnGeolocate.innerHTML = '<span class="geo-spinner"></span> Localisation en cours...';
+            setGeoStatus('', '');
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    initMap(lat, lng);
+                    setGeoStatus('✅ Localisation détectée ! Déplacez l\'épingle si nécessaire.', 'success');
+                    btnGeolocate.disabled = false;
+                    btnGeolocate.innerHTML = '<i data-lucide="crosshair" class="icon-sm"></i> Relocaliser automatiquement';
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                },
+                (err) => {
+                    btnGeolocate.disabled = false;
+                    btnGeolocate.innerHTML = '<i data-lucide="crosshair" class="icon-sm"></i> Sélectionner automatiquement ma localisation actuelle';
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                    let errMsg = '❌ Impossible de vous localiser.';
+                    if (err.code === 1) errMsg = '❌ Permission refusée. Autorisez la localisation dans votre navigateur.';
+                    else if (err.code === 2) errMsg = '❌ Position indisponible. Vérifiez votre GPS.';
+                    else if (err.code === 3) errMsg = '❌ Délai dépassé. Réessayez.';
+                    setGeoStatus(errMsg, 'error');
+                },
+                { timeout: 10000, enableHighAccuracy: true }
+            );
+        });
+    }
 
     if (btnNon && btnOui && livraisonVal && addressSection) {
         btnNon.addEventListener('click', () => {
@@ -249,7 +373,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btnOui.classList.remove('active');
             livraisonVal.value = 'Non';
             addressSection.style.display = 'none';
-            if (addressInput) addressInput.removeAttribute('required');
             if (typeof lucide !== 'undefined') lucide.createIcons();
         });
 
@@ -258,8 +381,14 @@ document.addEventListener('DOMContentLoaded', () => {
             btnNon.classList.remove('active');
             livraisonVal.value = 'Oui';
             addressSection.style.display = 'flex';
-            if (addressInput) addressInput.setAttribute('required', 'true');
             if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            // Initialiser la carte sur Cotonou par défaut si pas encore initialisée
+            if (!mapInitialized) {
+                setTimeout(() => initMap(DEFAULT_LAT, DEFAULT_LNG), 100);
+            } else {
+                setTimeout(() => deliveryMap && deliveryMap.invalidateSize(), 200);
+            }
         });
     }
 
@@ -273,14 +402,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const contactInfo = document.getElementById('contactInfo')?.value.trim() || '';
             const livraison   = livraisonVal ? livraisonVal.value : 'Non';
             const address     = addressInput?.value.trim() || '';
+            const lat         = deliveryLatEl?.value || '';
+            const lng         = deliveryLngEl?.value || '';
 
             if (!name || !contactInfo) {
                 alert('Veuillez remplir tous les champs obligatoires.');
                 return;
             }
-            if (livraison === 'Oui' && !address) {
-                alert('Veuillez indiquer votre adresse de livraison.');
-                addressInput.focus();
+            if (livraison === 'Oui' && !address && !lat) {
+                alert('Veuillez sélectionner votre localisation sur la carte ou saisir une adresse.');
                 return;
             }
 
@@ -308,7 +438,10 @@ document.addEventListener('DOMContentLoaded', () => {
             msg += `🚚 *Livraison :* ${livraison === 'Oui' ? 'À domicile' : 'Retrait sur place'}\n`;
 
             if (livraison === 'Oui') {
-                msg += `📍 *Adresse et indications :*\n${address}\n`;
+                if (address) msg += `📍 *Adresse :* ${address}\n`;
+                if (lat && lng) {
+                    msg += `🗺️ *Localisation GPS :* https://www.google.com/maps?q=${lat},${lng}\n`;
+                }
             }
 
             msg += `\nMerci de traiter ma commande. 🙏`;
