@@ -444,7 +444,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (livraison === 'Oui') {
                 if (address) msg += `📍 *Adresse :* ${address}\n`;
                 if (lat && lng) {
-                    msg += `🗺️ *Localisation GPS :* https://www.google.com/maps?q=${lat},${lng}\n`;
+                    msg += `\n🗺️ *Voir la position :*\nhttps://www.google.com/maps?q=${lat},${lng}\n`;
+                    msg += `\n🧭 *Démarrer la navigation GPS (livreur) :*\nhttps://www.google.com/maps/dir/?api=1&destination=${lat},${lng}\n`;
                 }
             }
 
