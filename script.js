@@ -285,9 +285,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!mapInitialized && typeof L !== 'undefined') {
             deliveryMap = L.map('delivery-map', { zoomControl: true }).setView([lat, lng], 15);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                maxZoom: 19
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
             }).addTo(deliveryMap);
 
             // Custom marker icon
@@ -319,8 +320,10 @@ document.addEventListener('DOMContentLoaded', () => {
             updateMarkerPosition(lat, lng);
             mapInitialized = true;
 
-            // Forcer le recalcul de la taille après l'affichage du conteneur
-            setTimeout(() => deliveryMap.invalidateSize(), 200);
+            // Forcer plusieurs invalidateSize pour s'assurer que la carte s'affiche
+            setTimeout(() => deliveryMap.invalidateSize(), 100);
+            setTimeout(() => deliveryMap.invalidateSize(), 400);
+            setTimeout(() => deliveryMap.invalidateSize(), 800);
         } else if (mapInitialized && deliveryMap) {
             deliveryMap.setView([lat, lng], 15);
             if (deliveryMarker) {
@@ -385,9 +388,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Initialiser la carte sur Cotonou par défaut si pas encore initialisée
             if (!mapInitialized) {
-                setTimeout(() => initMap(DEFAULT_LAT, DEFAULT_LNG), 100);
+                setTimeout(() => initMap(DEFAULT_LAT, DEFAULT_LNG), 150);
             } else {
-                setTimeout(() => deliveryMap && deliveryMap.invalidateSize(), 200);
+                setTimeout(() => { if (deliveryMap) deliveryMap.invalidateSize(); }, 300);
+                setTimeout(() => { if (deliveryMap) deliveryMap.invalidateSize(); }, 600);
             }
         });
     }
