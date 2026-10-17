@@ -118,79 +118,145 @@
       ],
       "priceRange": "XOF",
       "servesCuisine": "Produits fermiers",
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Produits Cabane du Fermier",
-        "itemListElement": [
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Poulet Bicyclette",
-              "description": "Poulet fermier élevé en plein air, chair ferme et savoureuse.",
-              "category": "Volailles"
-            },
-            "priceCurrency": "XOF",
-            "price": "2500"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cailles",
-              "description": "Petites volailles à la chair délicate et savoureuse, élevées localement.",
-              "category": "Volailles"
-            },
-            "priceCurrency": "XOF",
-            "price": "1200"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Lapin Fermier",
-              "description": "Viande tendre et maigre, élevé dans des conditions saines.",
-              "category": "Viandes"
-            },
-            "priceCurrency": "XOF",
-            "price": "4000"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Escargot",
-              "description": "Mets raffiné et nutritif, très apprécié au Bénin.",
-              "category": "Viandes"
-            },
-            "priceCurrency": "XOF",
-            "price": "6000"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Tchayo",
-              "description": "Légume traditionnel béninois précuit, riche en nutriments.",
-              "category": "Légumes"
-            },
-            "priceCurrency": "XOF",
-            "price": "1000"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Gboma",
-              "description": "Feuilles de morelle noire, incontournable de la cuisine béninoise.",
-              "category": "Légumes"
-            },
-            "priceCurrency": "XOF",
-            "price": "1000"
-          }
-        ]
-      },
       "sameAs": []
+    }
+    </script>
+
+    <!-- ========== PRODUITS JSON-LD (Extraits enrichis Google) ========== -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Produits Cabane du Fermier",
+      "url": "https://cabane-du-fermier.vercel.app/Html/index.html",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "Product",
+            "name": "Poulet Bicyclette",
+            "description": "Poulet fermier élevé en plein air, chair ferme et savoureuse. Le favori des familles béninoises.",
+            "image": "https://cabane-du-fermier.vercel.app/images/bicyclette.png",
+            "category": "Volailles",
+            "brand": { "@type": "Brand", "name": "Cabane du Fermier" },
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "XOF",
+              "price": "2500",
+              "priceValidUntil": "2027-12-31",
+              "availability": "https://schema.org/InStock",
+              "url": "https://cabane-du-fermier.vercel.app/Html/index.html#produits",
+              "seller": { "@type": "Organization", "name": "Cabane du Fermier" }
+            }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "Product",
+            "name": "Cailles",
+            "description": "Petites volailles à la chair délicate et savoureuse, élevées localement avec soin.",
+            "image": "https://cabane-du-fermier.vercel.app/images/Cailles.png",
+            "category": "Volailles",
+            "brand": { "@type": "Brand", "name": "Cabane du Fermier" },
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "XOF",
+              "price": "1200",
+              "priceValidUntil": "2027-12-31",
+              "availability": "https://schema.org/InStock",
+              "url": "https://cabane-du-fermier.vercel.app/Html/index.html#produits",
+              "seller": { "@type": "Organization", "name": "Cabane du Fermier" }
+            }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "Product",
+            "name": "Lapin Fermier",
+            "description": "Viande tendre et maigre, le lapin fermier est élevé dans des conditions saines pour une qualité optimale.",
+            "image": "https://cabane-du-fermier.vercel.app/images/Lapin.png",
+            "category": "Viandes",
+            "brand": { "@type": "Brand", "name": "Cabane du Fermier" },
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "XOF",
+              "price": "4000",
+              "priceValidUntil": "2027-12-31",
+              "availability": "https://schema.org/InStock",
+              "url": "https://cabane-du-fermier.vercel.app/Html/index.html#produits",
+              "seller": { "@type": "Organization", "name": "Cabane du Fermier" }
+            }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "item": {
+            "@type": "Product",
+            "name": "Escargot",
+            "description": "Mets raffiné et nutritif, l'escargot offre une viande maigre riche en minéraux, très apprécié au Bénin.",
+            "image": "https://cabane-du-fermier.vercel.app/images/escargot.png",
+            "category": "Viandes",
+            "brand": { "@type": "Brand", "name": "Cabane du Fermier" },
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "XOF",
+              "price": "6000",
+              "priceValidUntil": "2027-12-31",
+              "availability": "https://schema.org/InStock",
+              "url": "https://cabane-du-fermier.vercel.app/Html/index.html#produits",
+              "seller": { "@type": "Organization", "name": "Cabane du Fermier" }
+            }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "item": {
+            "@type": "Product",
+            "name": "Tchayo",
+            "description": "Légume traditionnel béninois précuit avec soin, riche en nutriments et en saveurs authentiques.",
+            "image": "https://cabane-du-fermier.vercel.app/images/Tchayo.png",
+            "category": "Légumes",
+            "brand": { "@type": "Brand", "name": "Cabane du Fermier" },
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "XOF",
+              "price": "1000",
+              "priceValidUntil": "2027-12-31",
+              "availability": "https://schema.org/InStock",
+              "url": "https://cabane-du-fermier.vercel.app/Html/index.html#produits",
+              "seller": { "@type": "Organization", "name": "Cabane du Fermier" }
+            }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 6,
+          "item": {
+            "@type": "Product",
+            "name": "Gboma",
+            "description": "Feuilles de morelle noire, le gboma est un incontournable de la cuisine béninoise, préparé avec soin.",
+            "image": "https://cabane-du-fermier.vercel.app/images/Gboman.png",
+            "category": "Légumes",
+            "brand": { "@type": "Brand", "name": "Cabane du Fermier" },
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "XOF",
+              "price": "1000",
+              "priceValidUntil": "2027-12-31",
+              "availability": "https://schema.org/InStock",
+              "url": "https://cabane-du-fermier.vercel.app/Html/index.html#produits",
+              "seller": { "@type": "Organization", "name": "Cabane du Fermier" }
+            }
+          }
+        }
+      ]
     }
     </script>
 
